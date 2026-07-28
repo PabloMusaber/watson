@@ -42,6 +42,7 @@ audio-sidecar/__pycache__/
 audio-sidecar/**/__pycache__/
 audio-sidecar/*.egg-info/
 audio-sidecar/.python-version
+audio-sidecar/.env
 
 ### Local data ###
 *.db

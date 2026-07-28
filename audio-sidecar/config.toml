@@ -1,0 +1,19 @@
+[audio]
+# Device index from `python -m sounddevice`; omit to use the system default.
+# device = 1
+
+[keyboard]
+# evdev key name to use for push-to-talk (hold to record, release to stop).
+# Run `python -c "from evdev import ecodes; print([k for k in dir(ecodes) if k.startswith('KEY_')])"` for all names.
+push_to_talk_key = "KEY_F3"
+# Optional: override auto-detected keyboard device path.
+# device = "/dev/input/event3"
+
+[deepgram]
+# See https://developers.deepgram.com/docs/models-languages-overview for options.
+stt_model = "nova-3"
+tts_model = "aura-2-asteria-en"
+
+[websocket]
+url = "ws://127.0.0.1:8080/ws/utterances"
+reconnect_seconds = 2
