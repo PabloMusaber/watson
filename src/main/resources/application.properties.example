@@ -1,0 +1,17 @@
+spring.application.name=watson
+embabel.agent.platform.models.gemini.api-key=${GEMINI_API_KEY}
+embabel.models.default-llm=gemini-2.5-flash
+
+server.port=8080
+
+openwa.base-url=${OPENWA_BASE_URL}
+openwa.api-key=${OPENWA_API_KEY}
+openwa.session-id=${OPENWA_SESSION_ID}
+openwa.webhook-secret=${OPENWA_WEBHOOK_SECRET}
+openwa.reply-chat-id=${OPENWA_REPLY_CHAT_ID}
+openwa.allowed-ids=${WHATSAPP_ALLOWED_IDS}
+
+logging.level.Embabel=WARN
+logging.level.com.embabel=WARN
+logging.level.org.springframework=WARN
+logging.level.org.apache.catalina=WARN
