@@ -11,6 +11,11 @@ openwa.webhook-secret=${OPENWA_WEBHOOK_SECRET}
 openwa.reply-chat-id=${OPENWA_REPLY_CHAT_ID}
 openwa.allowed-ids=${WHATSAPP_ALLOWED_IDS}
 
+telegram.bot-token=${TELEGRAM_BOT_TOKEN}
+telegram.reply-chat-id=${TELEGRAM_REPLY_CHAT_ID}
+telegram.allowed-ids=${TELEGRAM_ALLOWED_IDS}
+telegram.webhook-secret=${TELEGRAM_WEBHOOK_SECRET}
+
 logging.level.Embabel=WARN
 logging.level.com.embabel=WARN
 logging.level.org.springframework=WARN
