@@ -1,2 +1,3 @@
 org.springframework.boot.env.EnvironmentPostProcessor=\
-  com.pablomusaber.watson.shared.config.WebServletOverridePostProcessor
+  com.pablomusaber.watson.shared.config.WebServletOverridePostProcessor,\
+  com.pablomusaber.watson.shared.config.DbDirectoryPostProcessor

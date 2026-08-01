@@ -14,7 +14,9 @@ import org.springframework.core.io.Resource;
 import java.util.Map;
 
 @Slf4j
-@Agent(description = "Watson: the default, friendly and warm conversational agent.")
+@Agent(description = "Watson: the default assistant for casual conversation, greetings, small talk, and general "
+        + "questions that don't clearly belong to a specialist agent (English tutoring, financial/portfolio "
+        + "questions, IT news, or the Obsidian knowledge base).")
 @RequiredArgsConstructor
 public class WatsonAgent {
 
