@@ -6,7 +6,7 @@ import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
 @TestPropertySource(properties = {
-		"GEMINI_API_KEY=context-load-only",
+		"GOOGLE_API_KEY=context-load-only",
 		"OPENWA_BASE_URL=http://localhost:2785",
 		"OPENWA_API_KEY=context-load-only",
 		"OPENWA_SESSION_ID=context-load-only",

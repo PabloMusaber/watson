@@ -1,5 +1,5 @@
 spring.application.name=watson
-embabel.agent.platform.models.gemini.api-key=${GEMINI_API_KEY}
+embabel.agent.platform.models.googlegenai.api-key=${GOOGLE_API_KEY}
 embabel.models.default-llm=gemini-2.5-flash
 
 server.port=8080

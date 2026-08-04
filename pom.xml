@@ -82,7 +82,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.embabel.agent</groupId>
-			<artifactId>embabel-agent-starter-gemini</artifactId>
+			<artifactId>embabel-agent-starter-google-genai</artifactId>
 			<version>${embabel-agent.version}</version>
 		</dependency>
 		<dependency>
@@ -101,6 +101,10 @@
 		<dependency>
 			<groupId>org.springframework.ai</groupId>
 			<artifactId>spring-ai-starter-mcp-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-google-genai</artifactId>
 		</dependency>
 	</dependencies>
 

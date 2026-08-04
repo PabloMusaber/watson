@@ -1,11 +1,11 @@
 package com.pablomusaber.watson.shared.config;
 
+import com.google.genai.Client;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.openai.OpenAiChatModel;
-import org.springframework.ai.openai.OpenAiChatOptions;
-import org.springframework.ai.openai.api.OpenAiApi;
+import org.springframework.ai.google.genai.GoogleGenAiChatModel;
+import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -13,48 +13,42 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
-import java.util.Map;
-
 /**
- * Watson's Embabel-native LLM wiring (embabel-agent-starter-gemini) doesn't expose a plain
+ * Watson's Embabel-native LLM wiring (embabel-agent-starter-google-genai) doesn't expose a plain
  * Spring AI ChatClient bean, but MemoryExtractionService needs one for non-agentic async calls.
- * Reuses the same Gemini OpenAI-compatible endpoint and API key as the Embabel agent platform.
+ * Reuses the same Gemini native Google GenAI credentials as the Embabel agent platform.
  */
 @Configuration(proxyBeanMethods = false)
 public class GeminiChatModelConfig {
 
-    private static final String DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai";
     private static final String DEFAULT_MODEL = "gemini-2.5-flash";
-    private static final String DEFAULT_COMPLETIONS_PATH = "/chat/completions";
 
     @Bean
     @ConditionalOnMissingBean(ChatClient.class)
     ChatClient geminiChatClient(
-            @Value("${embabel.agent.platform.models.gemini.api-key:#{null}}") String propsApiKey,
-            @Value("${GEMINI_API_KEY:#{null}}") String envApiKey,
+            @Value("${embabel.agent.platform.models.googlegenai.api-key:#{null}}") String propsApiKey,
+            @Value("${GOOGLE_API_KEY:#{null}}") String envApiKey,
             @Value("${embabel.models.default-llm:#{null}}") String defaultLlm,
             ObjectProvider<ObservationRegistry> observationRegistry) {
 
         String apiKey = requireText(
                 firstNonBlank(propsApiKey, envApiKey),
-                "Gemini API key required: set GEMINI_API_KEY env var or embabel.agent.platform.models.gemini.api-key");
+                "Google GenAI API key required: set GOOGLE_API_KEY env var or embabel.agent.platform.models.googlegenai.api-key");
 
         String model = firstNonBlank(defaultLlm, DEFAULT_MODEL);
 
-        OpenAiApi openAiApi = OpenAiApi.builder()
-                .baseUrl(DEFAULT_BASE_URL)
+        Client genAiClient = Client.builder()
                 .apiKey(apiKey)
-                .completionsPath(DEFAULT_COMPLETIONS_PATH)
                 .build();
 
-        OpenAiChatOptions options = OpenAiChatOptions.builder()
+        GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
                 .model(model)
                 .temperature(0.0)
-                .extraBody(Map.of("thinkingConfig", Map.of("thinkingBudget", 0)))
+                .thinkingBudget(0)
                 .build();
 
-        ChatModel chatModel = OpenAiChatModel.builder()
-                .openAiApi(openAiApi)
+        ChatModel chatModel = GoogleGenAiChatModel.builder()
+                .genAiClient(genAiClient)
                 .defaultOptions(options)
                 .observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
                 .build();
