@@ -52,6 +52,7 @@ public class AgentRouter {
             Object output = autonomy.runAgent(u, ProcessOptions.DEFAULT, chosen).getOutput();
             if (output instanceof ChannelReply reply) {
                 conversations.logAgentResponse(u.messageId(), sessionId, chosen.getName(), u.channelId(), reply.text());
+                log.info("agent {} response: {}", chosen.getName(), reply.text());
                 return reply;
             }
             log.warn("agent {} produced no ChannelReply for utterance: {}", chosen.getName(), u.text());
@@ -95,6 +96,7 @@ public class AgentRouter {
         if (result instanceof ChannelReply reply) {
             lastAgentName.set(WATSON_AGENT_NAME);
             conversations.logAgentResponse(messageId, sessionId, WATSON_AGENT_NAME, u.channelId(), reply.text());
+            log.info("agent {} response: {}", WATSON_AGENT_NAME, reply.text());
             return reply;
         }
         throw new IllegalStateException("Watson fallback failed to produce a ChannelReply for: " + u.text());
