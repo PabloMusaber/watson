@@ -10,7 +10,7 @@ import com.pablomusaber.watson.financial_agent.domain.FinancialResponse;
 import com.pablomusaber.watson.shared.JsonUtils;
 import com.pablomusaber.watson.shared.PromptLoader;
 import com.pablomusaber.watson.shared.channel.Utterance;
-import com.pablomusaber.watson.shared.memory.AgentConversationStore;
+import com.pablomusaber.watson.shared.memory.ConversationMessageStore;
 import com.pablomusaber.watson.shared.memory.LongTermMemoryStore;
 import com.pablomusaber.watson.shared.memory.MemoryExtractionService;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +27,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FinancialAgent {
 
-    private static final String AGENT_NAME = "financial";
+    private static final String AGENT_NAME = FinancialAgent.class.getSimpleName();
 
-    private final AgentConversationStore conversations;
+    private final ConversationMessageStore conversations;
     private final LongTermMemoryStore memoryStore;
     private final MemoryExtractionService memoryExtractor;
     private final ObjectMapper mapper;
@@ -50,14 +50,13 @@ public class FinancialAgent {
             return null;
         }
 
-        String recentHistory = conversations.lastN(AGENT_NAME, 5);
+        String recentHistory = conversations.lastN(AGENT_NAME, conversations.currentSessionId(u.channelId()), 5);
         String memoryBlock = memoryStore.formatForPrompt();
         String prompt = buildPrompt(u.text(), recentHistory, memoryBlock);
 
         String raw = ai.withDefaultLlm().withToolGroup("ppi-broker").generateText(prompt);
         FinancialResponse response = parseResponse(raw);
 
-        conversations.append(AGENT_NAME, u.text(), response.spokenResponse());
         memoryExtractor.extract("User: \"%s\"\nAgent: \"%s\"".formatted(u.text(), response.spokenResponse()));
 
         return response;

@@ -10,7 +10,7 @@ import com.pablomusaber.watson.english_tutor.domain.TutorAnalysis;
 import com.pablomusaber.watson.shared.JsonUtils;
 import com.pablomusaber.watson.shared.PromptLoader;
 import com.pablomusaber.watson.shared.channel.Utterance;
-import com.pablomusaber.watson.shared.memory.AgentConversationStore;
+import com.pablomusaber.watson.shared.memory.ConversationMessageStore;
 import com.pablomusaber.watson.shared.memory.LongTermMemoryStore;
 import com.pablomusaber.watson.shared.memory.MemoryExtractionService;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +29,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EnglishTutorAgent {
 
-    private static final String AGENT_NAME = "english-tutor";
+    private static final String AGENT_NAME = EnglishTutorAgent.class.getSimpleName();
     private static final Duration HISTORY_WINDOW = Duration.ofMinutes(5);
 
-    private final AgentConversationStore history;
+    private final ConversationMessageStore history;
     private final LongTermMemoryStore memoryStore;
     private final MemoryExtractionService memoryExtractor;
     private final ObjectMapper mapper;
@@ -47,7 +47,7 @@ public class EnglishTutorAgent {
     @AchievesGoal(description = "English tutoring feedback given.")
     @Action
     public TutorAnalysis process(Utterance u, Ai ai) {
-        String recentContext = history.window(AGENT_NAME, HISTORY_WINDOW);
+        String recentContext = history.window(AGENT_NAME, history.currentSessionId(u.channelId()), HISTORY_WINDOW);
         String memoryBlock = memoryStore.formatForPrompt();
         String prompt = promptLoader.render(analyzeUtterancePrompt, Map.of(
                 "systemPrompt", promptLoader.load(systemPrompt),
@@ -58,7 +58,6 @@ public class EnglishTutorAgent {
         String raw = ai.withDefaultLlm().generateText(prompt);
         TutorAnalysis analysis = parseAnalysis(raw);
 
-        history.append(AGENT_NAME, u.text(), analysis.responseText());
         memoryExtractor.extract("User: \"%s\"\nTutor: \"%s\"".formatted(u.text(), analysis.responseText()));
 
         return analysis;

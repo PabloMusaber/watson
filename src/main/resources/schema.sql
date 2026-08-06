@@ -1,12 +1,17 @@
-CREATE TABLE IF NOT EXISTS agent_conversation_history (
-    id        INTEGER PRIMARY KEY AUTOINCREMENT,
-    agent     TEXT NOT NULL,
-    ts        TEXT NOT NULL,
-    utterance TEXT NOT NULL,
-    response  TEXT
+CREATE TABLE IF NOT EXISTS conversation_message (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    message_id  TEXT NOT NULL,
+    session_id  TEXT NOT NULL,
+    role        TEXT NOT NULL,
+    agent       TEXT NOT NULL,
+    channel_id  TEXT NOT NULL,
+    ts          TEXT NOT NULL,
+    text        TEXT NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_agent_history_agent_ts ON agent_conversation_history(agent, ts);
+CREATE INDEX IF NOT EXISTS idx_conv_msg_session_agent_ts ON conversation_message(session_id, agent, ts);
+CREATE INDEX IF NOT EXISTS idx_conv_msg_channel_ts ON conversation_message(channel_id, ts);
+CREATE INDEX IF NOT EXISTS idx_conv_msg_message_id ON conversation_message(message_id);
 
 CREATE TABLE IF NOT EXISTS long_term_memory (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,

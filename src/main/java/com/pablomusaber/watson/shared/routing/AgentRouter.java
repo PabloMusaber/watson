@@ -11,6 +11,7 @@ import com.embabel.agent.core.AgentPlatform;
 import com.embabel.agent.core.ProcessOptions;
 import com.pablomusaber.watson.shared.channel.ChannelReply;
 import com.pablomusaber.watson.shared.channel.Utterance;
+import com.pablomusaber.watson.shared.memory.ConversationMessageStore;
 import com.pablomusaber.watson.watson.WatsonAgent;
 import com.pablomusaber.watson.watson.WatsonReply;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -34,6 +36,7 @@ public class AgentRouter {
     private final Autonomy autonomy;
     private final AutonomyProperties autonomyProperties;
     private final AgentPlatform platform;
+    private final ConversationMessageStore conversations;
 
     private final AtomicReference<String> lastAgentName = new AtomicReference<>();
 
@@ -43,8 +46,12 @@ public class AgentRouter {
             Agent chosen = pickAgent(agents, u.text());
             lastAgentName.set(chosen.getName());
 
+            String sessionId = conversations.resolveSessionId(u.channelId());
+            conversations.logUserMessage(u.messageId(), sessionId, chosen.getName(), u.channelId(), u.text());
+
             Object output = autonomy.runAgent(u, ProcessOptions.DEFAULT, chosen).getOutput();
             if (output instanceof ChannelReply reply) {
+                conversations.logAgentResponse(u.messageId(), sessionId, chosen.getName(), u.channelId(), reply.text());
                 return reply;
             }
             log.warn("agent {} produced no ChannelReply for utterance: {}", chosen.getName(), u.text());
@@ -80,9 +87,14 @@ public class AgentRouter {
 
     @SuppressWarnings("rawtypes")
     private ChannelReply fallbackToWatson(Utterance u) {
+        String messageId = UUID.randomUUID().toString();
+        String sessionId = conversations.resolveSessionId(u.channelId());
+        conversations.logUserMessage(messageId, sessionId, WATSON_AGENT_NAME, u.channelId(), u.text());
+
         Object result = AgentInvocation.builder(platform).build((Class) WatsonReply.class).invoke(u);
         if (result instanceof ChannelReply reply) {
             lastAgentName.set(WATSON_AGENT_NAME);
+            conversations.logAgentResponse(messageId, sessionId, WATSON_AGENT_NAME, u.channelId(), reply.text());
             return reply;
         }
         throw new IllegalStateException("Watson fallback failed to produce a ChannelReply for: " + u.text());
