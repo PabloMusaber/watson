@@ -54,7 +54,7 @@ public class FinancialAgent {
         String memoryBlock = memoryStore.formatForPrompt();
         String prompt = buildPrompt(u.text(), recentHistory, memoryBlock);
 
-        String raw = ai.withDefaultLlm().withToolGroup("ppi-broker").generateText(prompt);
+        String raw = ai.withLlmByRole("financial").withToolGroup("ppi-broker").generateText(prompt);
         FinancialResponse response = parseResponse(raw);
 
         memoryExtractor.extract("User: \"%s\"\nAgent: \"%s\"".formatted(u.text(), response.spokenResponse()));

@@ -38,7 +38,7 @@ public class KnowledgeAgent {
                 "systemPrompt", promptLoader.load(systemPrompt),
                 "utterance", u.text()));
 
-        String result = ai.withDefaultLlm()
+        String result = ai.withLlmByRole("knowledge")
                 .withToolObject(obsidian)
                 .generateText(prompt);
 

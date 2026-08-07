@@ -55,7 +55,7 @@ public class EnglishTutorAgent {
                 "windowMinutes", HISTORY_WINDOW.toMinutes(),
                 "recentContext", recentContext,
                 "utterance", u.text()));
-        String raw = ai.withDefaultLlm().generateText(prompt);
+        String raw = ai.withLlmByRole("english-tutor").generateText(prompt);
         TutorAnalysis analysis = parseAnalysis(raw);
 
         memoryExtractor.extract("User: \"%s\"\nTutor: \"%s\"".formatted(u.text(), analysis.responseText()));

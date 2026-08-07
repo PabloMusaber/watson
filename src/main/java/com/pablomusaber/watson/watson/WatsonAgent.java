@@ -32,7 +32,7 @@ public class WatsonAgent {
         String prompt = promptLoader.render(replyPrompt, Map.of(
                 "systemPrompt", profile.systemPrompt(),
                 "utterance", u.text()));
-        String text = ai.withDefaultLlm().generateText(prompt);
+        String text = ai.withLlmByRole("watson").generateText(prompt);
         return new WatsonReply(text);
     }
 }

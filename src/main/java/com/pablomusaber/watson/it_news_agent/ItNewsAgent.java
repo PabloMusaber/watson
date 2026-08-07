@@ -46,7 +46,7 @@ public class ItNewsAgent {
                 "devToolsResults", devResults,
                 "cloudInfraResults", cloudResults));
 
-        String digest = ai.withDefaultLlm().generateText(prompt);
+        String digest = ai.withLlmByRole("it-news").generateText(prompt);
         log.info("Digest generated ({} chars) — sending to Telegram", digest.length());
         telegramService.sendMessage(digest);
         log.info("IT news digest sent.");
