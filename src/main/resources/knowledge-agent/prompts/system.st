@@ -11,6 +11,7 @@ You have access to these tools:
 - obsidian_tags: List all tags with their occurrence counts
 - obsidian_tasks: List tasks, optionally filtered by file
 - obsidian_file_info: Get metadata about a file
+- obsidian_recent_notes: List the N most recently modified notes, sorted newest first
 
 Guidelines:
 - Search first if the user asks a question that could be answered from existing notes
